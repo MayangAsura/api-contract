@@ -1,0 +1,754 @@
+openapi: '3.0.2'
+info:
+  title: User Management Feature API
+  version: '1.0'
+  description: OpenAPI for user management feature
+servers:
+  - url: https://app.server.com/api/v1
+paths:
+  /users:
+    get:
+      tags: 
+        - User
+      summary: Get all user
+      description: Get all user with keyword by name and nik
+      parameters:
+        - name: nama
+          in: query
+          description: filter user by nama
+          required: false
+          schema: 
+            type: string
+            nullable: true
+          examples:
+            mayang:
+              value: Mayang
+            andika: 
+              value: Andika
+            radini:
+              value: Radini 
+        - name: nik
+          in: query
+          description: filter user by nik
+          required: false
+          schema: 
+            type: string
+            nullable: true
+        - name: page
+          in: query
+          description: page for pagination
+          required: false
+          schema: 
+            type: number
+            nullable: true
+        - name: per_page
+          in: query
+          description: number of user per page for pagination
+          required: false
+          schema:
+            type: number
+            nullable: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  type: object
+                  properties:
+                    page:
+                      type: number
+                      default: 0
+                    per_page:
+                      type: number
+                      default: 0
+                    total:
+                      type: number
+                      default: 0
+                    total_page:
+                      type: number
+                      default: 0
+                    data:
+                      type: object
+                      properties:
+                        id: 
+                          type: string
+                        nama: 
+                          type: string
+                        nik: 
+                          type: string
+                        email: 
+                          type: string
+                        jabatan_id: 
+                          type: number
+                        skill_id: 
+                         type: array
+                         items:
+                          type: number
+                        interest:
+                          type: string
+                        status:
+                          type: number
+              examples:
+                success:
+                  description: Success get all user Example
+                  value:
+                    page: 0
+                    per_page: 0
+                    total: 2
+                    total_page: 0
+                    data:
+                      - id: 1
+                        nama: Mayang Asura
+                        nik: 1234567891011
+                        email: mayang.asura123@mail.com
+                        jabatan_id: 2
+                        skill_id: null
+                        interest: null
+                        status: 1
+                      - id: 2
+                        nama: Radini Alfarukh
+                        nik: 0987654321011
+                        email: radini.alfarukh@mail.com
+                        jabatan_id: 1
+                        skill_id: 
+                          - 1
+                        interest: 
+                          - programming
+                          - technology
+                        status: 1
+    post: 
+      tags:   
+        - User
+      summary: Create new user
+      description: Create new user to database
+      requestBody:
+        required: true
+        content:
+          application/json: 
+            schema: 
+              type: object
+              properties:
+                nama:
+                  type: string
+                  maxLength: 255
+                  required: 
+                    - 'true'
+                email:
+                  type: string
+                  maxLength: 255
+                  uniqueItems: true
+                  required: 
+                    - 'true'
+                nik:
+                  type: string
+                  maxLength: 255
+                  minLength: 13
+                  uniqueItems: true
+                jabatan_id:
+                  type: number
+                  minLength: 1
+                  required:
+                    - 'true'
+                skill_id: 
+                  type: array
+                  items: 
+                    type: string
+                  nullable: true
+                interest:
+                  type: array
+                  items: 
+                    type: string
+                  required:
+                    - 'false'
+                status:
+                  type: number
+                  default: 1
+                  required:
+                    - 'true'
+            examples:
+              example01:
+                value: 
+                  nama: Mayang Asura
+                  email: mayang.asura123@mail.com
+                  nik: 1234567891011
+                  jabatan_id: 2
+                  skill_id: []
+                  interest: null
+                  status: 1
+              example02:
+                value: 
+                  nama: Radini Alfarukh
+                  email: radini.alfarukh@mail.com
+                  nik: 0987654321011
+                  jabatan_id: 1
+                  skill_id: 
+                    - 1
+                  interest: 
+                    - programming
+                    - technology
+                  status: 1
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  type: object
+                  properties:
+                    id: 
+                      type: string
+                    nama: 
+                      type: string
+                    nik: 
+                      type: string
+                    email: 
+                      type: string
+                    jabatan_id: 
+                      type: number
+                    skill_id: 
+                     type: number
+                    interest:
+                      type: string
+                    status:
+                      type: number
+              examples:
+                example01:
+                  description: Success created user Example01
+                  value:
+                    id: 1
+                    nama: Mayang Asura
+                    nik: 1234567891011
+                    email: mayang.asura123@mail.com
+                    jabatan_id: 2
+                    skill_id: []
+                    interest: null
+                    status: 1
+                example02:
+                  description: Success created user Example02
+                  value:
+                    id: 2
+                    nama: Radini Alfarukh
+                    nik: 0987654321011
+                    email: radini.alfarukh@mail.com
+                    jabatan_id: 1
+                    skill_id: 2
+                    interest: 
+                      - programming
+                      - technology
+                    status: 1
+  /user/{nik}:
+    get:
+      tags: 
+        - User
+      summary: Get detail user
+      description: Get detail user by nik
+      parameters:
+        - name: nik
+          in: path
+          description: get user by nik
+          required: true
+          schema:
+            type: string
+          examples:
+            example01 :
+              description: nik example01
+              value: 1234567891011
+            example02 :
+              description: nik example02
+              value: 0987654321011
+      responses:
+        '200':
+          description: Success get user by nik
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  type: object
+                  properties:
+                    id: 
+                      type: string
+                    nama: 
+                      type: string
+                    nik: 
+                      type: string
+                    email: 
+                      type: string
+                    jabatan_id: 
+                      type: number
+                    skill_id: 
+                     type: number
+                    interest:
+                      type: string
+                    status:
+                      type: number
+              examples:
+                example01:
+                  description: Success
+                  value:
+                    id: 1
+                    nama: Mayang Asura
+                    nik: 1234567891011
+                    email: mayang.asura123@mail.com
+                    jabatan_id: 2
+                    skill_id: []
+                    interest: null
+                    status: 1
+                example02:
+                  description: Success
+                  value:
+                    id: 2
+                    nama: Radini Alfarukh
+                    nik: 0987654321011
+                    email: radini.alfarukh@mail.com
+                    jabatan_id: 1
+                    skill_id: 2
+                    interest: 
+                      - programming
+                      - technology
+                    status: 1
+    put:
+      tags: 
+        - User
+      summary: Update existing user
+      description: Update existing user by nik
+      parameters:
+        - name: nik
+          in: path
+          description: get user by nik
+          required: true
+          schema:
+            type: string
+          examples:
+            example01 :
+              description: nik example01
+              value: 1234567891011
+            example02 :
+              description: nik example02
+              value: 0987654321011
+            
+      requestBody:
+        required: true
+        content:
+          application/json: 
+            schema: 
+              type: object
+              properties:
+                nama:
+                  type: string
+                  maxLength: 255
+                  required: 
+                    - 'true'
+                email:
+                  type: string
+                  maxLength: 255
+                  uniqueItems: true
+                  required: 
+                    - 'true'
+                nik:
+                  type: string
+                  maxLength: 255
+                  minLength: 13
+                  uniqueItems: true
+                jabatan_id:
+                  type: number
+                  minLength: 1
+                  required:
+                    - 'true'
+                interest:
+                  type: string
+                  required:
+                    - 'false'
+                skill_id:
+                  type: array
+                  minItems: 0
+                  items:
+                    type: number
+                    minLength: 1
+                status:
+                  type: number
+                  default: 1
+                  required:
+                    - 'true'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  type: object
+                  properties:
+                    id: 
+                      type: string
+                    nama: 
+                      type: string
+                    nik: 
+                      type: string
+                    email: 
+                      type: string
+                    jabatan_id: 
+                      type: number
+                    skill_id: 
+                      type: array
+                      items: 
+                        type: number
+                      nullable: true
+                    interest:
+                      type: string
+                    status:
+                      type: number
+              examples:
+                example01:
+                  description: Success updated user
+                  value:
+                    id: 1
+                    nama: Mayang Asura
+                    nik: 1234567891011
+                    email: mayang.asura123@mail.com
+                    jabatan_id: 2
+                    skill_id: 
+                      - 1
+                      - 3
+                    interest: 
+                      - programming
+                      - php
+                    status: 1
+                example02:
+                  description: Success updated user
+                  value:
+                    id: 2
+                    nama: Radini Alfarukh
+                    nik: 0987654321011
+                    email: radini.alfarukh@mail.com
+                    jabatan_id: 1
+                    skill_id: 2
+                    interest: 
+                      - programming
+                      - technology
+                    status: 1
+    delete:
+      tags: 
+        - User
+      summary: Delete existing user
+      description: Delete existing user by nik
+      parameters:
+        - name: nik
+          in: path
+          required: true
+          schema:
+            type: string
+          examples:
+            example01 :
+              description: nik example01
+              value: 1234567891011
+            example02 :
+              description: nik example02
+              value: 0987654321011
+      responses:
+        200:
+          description: User deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  success:  
+                    type: boolean
+              examples:
+                success:
+                  description: Success delete user
+                  value:
+                    success : true
+        404:
+          description: Failed delete user 
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  success:  
+                    type: boolean
+              examples:
+                success:
+                  description: Failed delete user
+                  value:
+                    success : false  
+  /user/{nik}/skill:
+    post:
+      tags: 
+        - Skill
+      summary: Add skill to user
+      description: Add skill to axisting user by nik
+      parameters:
+        - name: nik
+          in: path
+          description: add user skill by nik
+          required: true
+          schema:
+            type: string
+          examples:
+            example01 :
+              description: nik example01
+              value: 1234567891011
+            example02 :
+              description: nik example02
+              value: 0987654321011
+      requestBody:
+        required: true
+        content:
+          application/json: 
+            schema: 
+              type: object
+              properties:
+                skill_id:
+                  type: array
+                  items:
+                    type: number
+                  minLength: 1
+                  required: 
+                    - 'true'
+            examples:
+              java:
+                description: skill java
+                value: 1
+              javascript:
+                description: skill javascript
+                value: 2
+              php:
+                description: skill php
+                value: 3
+              nodejs:
+                description: skill php
+                value: 4
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  type: object
+                  properties:
+                    id: 
+                      type: string
+                    nama: 
+                      type: string
+                    nik: 
+                      type: string
+                    email: 
+                      type: string
+                    jabatan_id: 
+                      type: number
+                    skill_id: 
+                      type: array
+                      items: 
+                        type: number
+                      nullable: true
+                    interest:
+                      type: string
+                    status:
+                      type: number
+              examples:
+                example01:
+                  description: Success add skill to user
+                  value:
+                    id: 1
+                    nama: Mayang Asura
+                    nik: 1234567891011
+                    email: mayang.asura123@mail.com
+                    jabatan_id: 2
+                    skill_id: 
+                      - 1
+                      - 3
+                    interest: null
+                    status: 1
+                example02:
+                  description: Success add skill to user
+                  value:
+                    id: 2
+                    nama: Radini Alfarukh
+                    nik: 0987654321011
+                    email: radini.alfarukh@mail.com
+                    jabatan_id: 1
+                    skill_id: 
+                      - 2
+                      - 3
+                    interest: 
+                      - programming
+                      - technology
+                    status: 1
+    put:
+      tags: 
+        - Skill
+      summary: Update skill of user
+      description: Update skill to existing user
+      parameters:
+        - name: nik
+          in: path
+          description: add user skill by nik
+          required: true
+          schema:
+            type: string
+          examples:
+            example01 :
+              description: nik example01
+              value: 1234567891011
+            example02 :
+              description: nik example02
+              value: 0987654321011
+      requestBody:
+        required: true
+        content: 
+          application/json:
+            schema:
+              type: object
+              properties:
+                skill_id:
+                  type: array
+                  items:
+                    type: number
+                  minLength: 1
+                  required: 
+                    - 'true'
+            examples:
+              java:
+                description: skill java
+                value: 1
+              javascript:
+                description: skill javascript
+                value: 2
+              php:
+                description: skill php
+                value: 3
+              nodejs:
+                description: skill php
+                value: 4
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  type: object
+                  properties:
+                    id: 
+                      type: string
+                    nama: 
+                      type: string
+                    nik: 
+                      type: string
+                    email: 
+                      type: string
+                    jabatan_id: 
+                      type: number
+                    skill_id: 
+                      type: array
+                      items: 
+                        type: number
+                      nullable: true
+                    interest:
+                      type: string
+                    status:
+                      type: number
+              examples:
+                example01:
+                  description: Success add skill to user
+                  value:
+                    id: 1
+                    nama: Mayang Asura
+                    nik: 1234567891011
+                    email: mayang.asura123@mail.com
+                    jabatan_id: 2
+                    skill_id: 
+                      - 1
+                      - 4
+                    interest: null
+                    status: 1
+                example02:
+                  description: Success add skill to user
+                  value:
+                    id: 2
+                    nama: Radini Alfarukh
+                    nik: 0987654321011
+                    email: radini.alfarukh@mail.com
+                    jabatan_id: 1
+                    skill_id: 
+                      - 1
+                      - 3
+                    interest: 
+                      - programming
+                      - technology
+                    status: 1
+  /user/{nik}/skill/{skill_id}:
+    delete:
+      tags: 
+        - Skill
+      summary: Delete skill existing user
+      description: Delete skill existing user by nik
+      parameters:
+        - name: nik
+          in: path
+          required: true
+          schema:
+            type: string
+          examples:
+            example01 :
+              description: nik example01
+              value: 1234567891011
+            example02 :
+              description: nik example02
+              value: 0987654321011
+        - name: skill_id
+          in: path
+          required: true
+          schema:
+            type: string
+          examples:
+            example01 :
+              description: skill_id example01
+              value: 1
+            example02 :
+              description: skill_id example02
+              value: 2
+      responses:
+        200:
+          description: Success delete skill
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  success:  
+                    type: boolean
+              examples:
+                success:
+                  description: Success delete skill
+                  value:
+                    success : true
+        404:
+          description: Failed delete skill 
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  success:  
+                    type: boolean
+              examples:
+                success:
+                  description: Failed delete skill
+                  value:
+                    success : false  
+
+externalDocs:
+  url: "https://dbdiagram.io/d/63633afdc9abfc61116ff685"
