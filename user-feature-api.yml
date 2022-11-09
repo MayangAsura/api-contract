@@ -8,6 +8,8 @@ servers:
 paths:
   /users:
     get:
+      security:
+        - bearerAuth: []
       tags: 
         - User
       summary: Get all user
@@ -54,43 +56,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items: 
-                  type: object
-                  properties:
-                    page:
-                      type: number
-                      default: 0
-                    per_page:
-                      type: number
-                      default: 0
-                    total:
-                      type: number
-                      default: 0
-                    total_page:
-                      type: number
-                      default: 0
-                    data:
-                      type: object
-                      properties:
-                        id: 
-                          type: string
-                        nama: 
-                          type: string
-                        nik: 
-                          type: string
-                        email: 
-                          type: string
-                        jabatan_id: 
-                          type: number
-                        skill_id: 
-                         type: array
-                         items:
-                          type: number
-                        interest:
-                          type: string
-                        status:
-                          type: number
+                $ref: '#/components/schemas/getUserArray'
               examples:
                 success:
                   description: Success get all user Example
@@ -119,7 +85,7 @@ paths:
                           - programming
                           - technology
                         status: 1
-    post: 
+    post:
       tags:   
         - User
       summary: Create new user
@@ -129,93 +95,14 @@ paths:
         content:
           application/json: 
             schema: 
-              type: object
-              properties:
-                nama:
-                  type: string
-                  maxLength: 255
-                  required: 
-                    - 'true'
-                email:
-                  type: string
-                  maxLength: 255
-                  uniqueItems: true
-                  required: 
-                    - 'true'
-                nik:
-                  type: string
-                  maxLength: 255
-                  minLength: 13
-                  uniqueItems: true
-                jabatan_id:
-                  type: number
-                  minLength: 1
-                  required:
-                    - 'true'
-                skill_id: 
-                  type: array
-                  items: 
-                    type: string
-                  nullable: true
-                interest:
-                  type: array
-                  items: 
-                    type: string
-                  required:
-                    - 'false'
-                status:
-                  type: number
-                  default: 1
-                  required:
-                    - 'true'
-            examples:
-              example01:
-                value: 
-                  nama: Mayang Asura
-                  email: mayang.asura123@mail.com
-                  nik: 1234567891011
-                  jabatan_id: 2
-                  skill_id: []
-                  interest: null
-                  status: 1
-              example02:
-                value: 
-                  nama: Radini Alfarukh
-                  email: radini.alfarukh@mail.com
-                  nik: 0987654321011
-                  jabatan_id: 1
-                  skill_id: 
-                    - 1
-                  interest: 
-                    - programming
-                    - technology
-                  status: 1
+              $ref: '#/components/schemas/createOrUpdateUser'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items: 
-                  type: object
-                  properties:
-                    id: 
-                      type: string
-                    nama: 
-                      type: string
-                    nik: 
-                      type: string
-                    email: 
-                      type: string
-                    jabatan_id: 
-                      type: number
-                    skill_id: 
-                     type: number
-                    interest:
-                      type: string
-                    status:
-                      type: number
+                $ref: '#/components/schemas/userArray'
               examples:
                 example01:
                   description: Success created user Example01
@@ -243,50 +130,21 @@ paths:
                     status: 1
   /user/{nik}:
     get:
+      security:
+        - bearerAuth: []
       tags: 
         - User
       summary: Get detail user
       description: Get detail user by nik
       parameters:
-        - name: nik
-          in: path
-          description: get user by nik
-          required: true
-          schema:
-            type: string
-          examples:
-            example01 :
-              description: nik example01
-              value: 1234567891011
-            example02 :
-              description: nik example02
-              value: 0987654321011
+        - $ref: '#/components/parameters/nikUser'
       responses:
         '200':
           description: Success get user by nik
           content:
             application/json:
               schema:
-                type: array
-                items: 
-                  type: object
-                  properties:
-                    id: 
-                      type: string
-                    nama: 
-                      type: string
-                    nik: 
-                      type: string
-                    email: 
-                      type: string
-                    jabatan_id: 
-                      type: number
-                    skill_id: 
-                     type: number
-                    interest:
-                      type: string
-                    status:
-                      type: number
+                $ref: '#/components/schemas/userArray'
               examples:
                 example01:
                   description: Success
@@ -313,97 +171,27 @@ paths:
                       - technology
                     status: 1
     put:
+      security:
+        - bearerAuth: []
       tags: 
         - User
       summary: Update existing user
       description: Update existing user by nik
       parameters:
-        - name: nik
-          in: path
-          description: get user by nik
-          required: true
-          schema:
-            type: string
-          examples:
-            example01 :
-              description: nik example01
-              value: 1234567891011
-            example02 :
-              description: nik example02
-              value: 0987654321011
-            
+        - $ref: '#/components/parameters/nikUser'
       requestBody:
         required: true
         content:
           application/json: 
             schema: 
-              type: object
-              properties:
-                nama:
-                  type: string
-                  maxLength: 255
-                  required: 
-                    - 'true'
-                email:
-                  type: string
-                  maxLength: 255
-                  uniqueItems: true
-                  required: 
-                    - 'true'
-                nik:
-                  type: string
-                  maxLength: 255
-                  minLength: 13
-                  uniqueItems: true
-                jabatan_id:
-                  type: number
-                  minLength: 1
-                  required:
-                    - 'true'
-                interest:
-                  type: string
-                  required:
-                    - 'false'
-                skill_id:
-                  type: array
-                  minItems: 0
-                  items:
-                    type: number
-                    minLength: 1
-                status:
-                  type: number
-                  default: 1
-                  required:
-                    - 'true'
+              $ref: '#/components/schemas/createOrUpdateUser'
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items: 
-                  type: object
-                  properties:
-                    id: 
-                      type: string
-                    nama: 
-                      type: string
-                    nik: 
-                      type: string
-                    email: 
-                      type: string
-                    jabatan_id: 
-                      type: number
-                    skill_id: 
-                      type: array
-                      items: 
-                        type: number
-                      nullable: true
-                    interest:
-                      type: string
-                    status:
-                      type: number
+                $ref: '#/components/schemas/userArray'
               examples:
                 example01:
                   description: Success updated user
@@ -434,23 +222,14 @@ paths:
                       - technology
                     status: 1
     delete:
+      security:
+        - bearerAuth: []
       tags: 
         - User
       summary: Delete existing user
       description: Delete existing user by nik
       parameters:
-        - name: nik
-          in: path
-          required: true
-          schema:
-            type: string
-          examples:
-            example01 :
-              description: nik example01
-              value: 1234567891011
-            example02 :
-              description: nik example02
-              value: 0987654321011
+        - $ref: '#/components/parameters/nikUser'
       responses:
         200:
           description: User deleted
@@ -482,24 +261,14 @@ paths:
                     success : false  
   /user/{nik}/skill:
     post:
+      security:
+        - bearerAuth: []
       tags: 
         - Skill
       summary: Add skill to user
       description: Add skill to axisting user by nik
       parameters:
-        - name: nik
-          in: path
-          description: add user skill by nik
-          required: true
-          schema:
-            type: string
-          examples:
-            example01 :
-              description: nik example01
-              value: 1234567891011
-            example02 :
-              description: nik example02
-              value: 0987654321011
+        - $ref: '#/components/parameters/nikUser'
       requestBody:
         required: true
         content:
@@ -515,47 +284,24 @@ paths:
                   required: 
                     - 'true'
             examples:
-              java:
-                description: skill java
-                value: 1
-              javascript:
-                description: skill javascript
-                value: 2
-              php:
-                description: skill php
-                value: 3
-              nodejs:
-                description: skill php
-                value: 4
+              user01:
+                description: post 3 skill_id
+                value:
+                  - 1
+                  - 3
+                  - 4
+              user02:
+                description: post 1 skill_id
+                value:
+                  - 5
+                
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items: 
-                  type: object
-                  properties:
-                    id: 
-                      type: string
-                    nama: 
-                      type: string
-                    nik: 
-                      type: string
-                    email: 
-                      type: string
-                    jabatan_id: 
-                      type: number
-                    skill_id: 
-                      type: array
-                      items: 
-                        type: number
-                      nullable: true
-                    interest:
-                      type: string
-                    status:
-                      type: number
+                $ref : '#/components/schemas/userArray'
               examples:
                 example01:
                   description: Success add skill to user
@@ -586,29 +332,19 @@ paths:
                       - technology
                     status: 1
     put:
+      security:
+        - bearerAuth: []
       tags: 
         - Skill
       summary: Update skill of user
       description: Update skill to existing user
       parameters:
-        - name: nik
-          in: path
-          description: add user skill by nik
-          required: true
-          schema:
-            type: string
-          examples:
-            example01 :
-              description: nik example01
-              value: 1234567891011
-            example02 :
-              description: nik example02
-              value: 0987654321011
+        - $ref: '#/components/parameters/nikUser'
       requestBody:
         required: true
         content: 
           application/json:
-            schema:
+            schema: 
               type: object
               properties:
                 skill_id:
@@ -619,47 +355,25 @@ paths:
                   required: 
                     - 'true'
             examples:
-              java:
-                description: skill java
-                value: 1
-              javascript:
-                description: skill javascript
-                value: 2
-              php:
-                description: skill php
-                value: 3
-              nodejs:
-                description: skill php
-                value: 4
+              user01:
+                description: update 4 skill_id
+                value:
+                  - 1
+                  - 3
+                  - 4
+                  - 5
+              user02:
+                description: update 2 skill_id
+                value:
+                  - 1
+                  - 5
       responses:
         '200':
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items: 
-                  type: object
-                  properties:
-                    id: 
-                      type: string
-                    nama: 
-                      type: string
-                    nik: 
-                      type: string
-                    email: 
-                      type: string
-                    jabatan_id: 
-                      type: number
-                    skill_id: 
-                      type: array
-                      items: 
-                        type: number
-                      nullable: true
-                    interest:
-                      type: string
-                    status:
-                      type: number
+                $ref: '#/components/schemas/userArray'
               examples:
                 example01:
                   description: Success add skill to user
@@ -691,35 +405,15 @@ paths:
                     status: 1
   /user/{nik}/skill/{skill_id}:
     delete:
+      security:
+        - bearerAuth: []
       tags: 
         - Skill
       summary: Delete skill existing user
       description: Delete skill existing user by nik
       parameters:
-        - name: nik
-          in: path
-          required: true
-          schema:
-            type: string
-          examples:
-            example01 :
-              description: nik example01
-              value: 1234567891011
-            example02 :
-              description: nik example02
-              value: 0987654321011
-        - name: skill_id
-          in: path
-          required: true
-          schema:
-            type: string
-          examples:
-            example01 :
-              description: skill_id example01
-              value: 1
-            example02 :
-              description: skill_id example02
-              value: 2
+        - $ref: '#/components/parameters/nikUser'
+        - $ref: '#/components/parameters/skill_id'
       responses:
         200:
           description: Success delete skill
@@ -750,5 +444,142 @@ paths:
                   value:
                     success : false  
 
+components:
+  securitySchemes:
+    bearerAuth:
+      description: bearer token for authentication
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    nikUser:
+      name: nik
+      in: path
+      description: get user by nik
+      required: true
+      schema:
+        type: string
+      examples:
+        example01 :
+          description: nik example01
+          value: 1234567891011
+        example02 :
+          description: nik example02
+          value: 0987654321011
+    skill_id:
+      name: skill_id
+      in: path
+      required: true
+      schema:
+        type: string
+      examples:
+        example01 :
+          description: skill_id example01
+          value: 1
+        example02 :
+          description: skill_id example02
+          value: 2
+  schemas:
+    getUserArray:
+      type: array
+      items: 
+        type: object
+        properties:
+          page:
+            type: number
+            default: 0
+          per_page:
+            type: number
+            default: 0
+          total:
+            type: number
+            default: 0
+          total_page:
+            type: number
+            default: 0
+          data:
+            type: object
+            properties:
+              id: 
+                type: string
+              nama: 
+                type: string
+              nik: 
+                type: string
+              email: 
+                type: string
+              jabatan_id: 
+                type: number
+              skill_id: 
+               type: array
+               items:
+                type: number
+              interest:
+                type: string
+              status:
+                type: number
+    userArray:
+      type: array
+      items: 
+        type: object
+        properties:
+          id: 
+            type: string
+          nama: 
+            type: string
+          nik: 
+            type: string
+          email: 
+            type: string
+          jabatan_id: 
+            type: number
+          skill_id: 
+            type: array
+            items:
+              type: number
+          interest:
+            type: string
+          status:
+            type: number
+    createOrUpdateUser:
+      type: object
+      properties:
+        nama:
+          type: string
+          maxLength: 255
+          required: 
+            - 'true'
+        email:
+          type: string
+          maxLength: 255
+          uniqueItems: true
+          required: 
+            - 'true'
+        nik:
+          type: string
+          maxLength: 255
+          minLength: 13
+          uniqueItems: true
+        jabatan_id:
+          type: number
+          minLength: 1
+          required:
+            - 'true'
+        skill_id: 
+          type: array
+          items: 
+            type: number
+          nullable: true
+        interest:
+          type: array
+          items: 
+            type: string
+          required:
+            - 'false'
+        status:
+          type: number
+          default: 1
+          required:
+            - 'true'
 externalDocs:
   url: "https://dbdiagram.io/d/63633afdc9abfc61116ff685"
